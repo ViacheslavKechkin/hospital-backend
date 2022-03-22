@@ -4,7 +4,7 @@
   "description": "settings: npm init npm i express npm i mongoose npm i cors",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "nodemon app.js"
   },
   "repository": {
     "type": "git",
@@ -17,8 +17,10 @@
   },
   "homepage": "https://github.com/ViacheslavKechkin/hospital-backend#readme",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "express": "^4.17.3",
-    "mongoose": "^6.2.7"
+    "mongoose": "^6.2.7",
+    "nodemon": "^2.0.15"
   }
 }
