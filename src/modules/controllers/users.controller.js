@@ -44,15 +44,15 @@ module.exports.login = async (req, res) => {
     const user = await User.findOne({ email });
 
     if (!user) {
-      return res.status(400).send(`Пользователь ${email} не найден!`);
+      return res.status(400).send(`User ${email} not found !`);
     }
 
     const validPassword = bcrypt.compareSync(password, user.password)
 
     if (!validPassword) {
-      return res.status(400).send(`Введен неверный пароль`);
+      return res.status(400).send(`Wrong password`);
     }
-    
+
     const token = generateAccessToken(user._id)
     return res.json({ token })
   }
