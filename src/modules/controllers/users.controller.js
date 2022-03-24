@@ -18,10 +18,11 @@ module.exports.createUser = async (req, res) => {
   try {
     const { email, password } = req.body;
     const candidate = await User.findOne({ email });
+    
     if (candidate) {
-      return res.status(400).json({ massage: 'Пользователь с таким именем уже существует' })
+      return res.status(400).send('Пользователь с таким именем уже существует!')
     }
-
+    
     const hashPassword = bcrypt.hashSync(password, 7);
 
     const user = new User({ email, password: hashPassword });
@@ -32,9 +33,30 @@ module.exports.createUser = async (req, res) => {
       });
     });
 
-    const token = generateAccessToken(user._id)
-    return res.json({ token })
   } catch (e) {
     res.status(400).send('Registration error!');
   }
 };
+
+module.exports.login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(400).send(`Пользователь ${email} не найден!`);
+    }
+
+    const validPassword = bcrypt.compareSync(password, user.password)
+
+    if (!validPassword) {
+      return res.status(400).send(`Введен неверный пароль`);
+    }
+    
+    const token = generateAccessToken(user._id)
+    return res.json({ token })
+  }
+  catch (e) {
+    res.status(400).send('Login error!');
+  }
+}
