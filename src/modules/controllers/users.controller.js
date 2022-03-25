@@ -1,5 +1,4 @@
 const User = require('../../bd/models/users/index');
-const Record = require('../../bd/models/records/index');
 const bcrypt = require('bcryptjs');
 const jwt = require("jsonwebtoken")
 const { secret } = require("../../../config")
@@ -11,12 +10,6 @@ const generateAccessToken = (id) => {
 
 module.exports.getAllUsers = (req, res) => {
   User.find().then(result => {
-    res.send({ data: result });
-  });
-};
-
-module.exports.getAllRecords = (req, res) => {
-  Record.find().then(result => {
     res.send({ data: result });
   });
 };
