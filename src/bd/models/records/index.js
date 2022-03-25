@@ -9,4 +9,4 @@ const recordsScheme = new Schema({
   comment: String,
 });
 
-module.exports = Records = mongoose.model("users", recordsScheme);
+module.exports = Record = mongoose.model("records", recordsScheme);

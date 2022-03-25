@@ -18,21 +18,18 @@ module.exports.createUser = async (req, res) => {
   try {
     const { email, password } = req.body;
     const candidate = await User.findOne({ email });
-    
+
     if (candidate) {
-      return res.status(400).send('Пользователь с таким именем уже существует!')
+      return res.status(400).send('User with this email exists !')
     }
-    
+
     const hashPassword = bcrypt.hashSync(password, 7);
 
     const user = new User({ email, password: hashPassword });
 
-    user.save().then(() => {
-      User.find().then(result => {
-        res.send({ data: result });
-      });
-    });
-
+    user.save()
+    const token = generateAccessToken(user._id)
+    res.json({ token })
   } catch (e) {
     res.status(400).send('Registration error!');
   }
@@ -50,7 +47,7 @@ module.exports.login = async (req, res) => {
     const validPassword = bcrypt.compareSync(password, user.password)
 
     if (!validPassword) {
-      return res.status(400).send(`Wrong password`);
+      return res.status(404).send(`Wrong password`);
     }
 
     const token = generateAccessToken(user._id)

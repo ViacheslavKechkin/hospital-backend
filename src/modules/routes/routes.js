@@ -7,7 +7,12 @@ const {
   login
 } = require('../controllers/users.controller');
 
+const {
+  getAllRecords
+} = require('../controllers/record.controller');
+
 router.get('/allUsers', getAllUsers);
+router.get('/allRecords', getAllRecords);
 router.post('/createUser', createUser);
 router.post('/login', login);
 
