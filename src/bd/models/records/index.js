@@ -1,12 +1,11 @@
-const mongoose = require("mongoose");
-
-const { Schema } = mongoose;
+const { Schema, model } = require("mongoose");
 
 const recordsScheme = new Schema({
   name: String,
   doctor: String,
   date: String,
   comment: String,
+  loginStorage: String
 });
 
-module.exports = Record = mongoose.model("records", recordsScheme);
+module.exports = Record = model("records", recordsScheme);
