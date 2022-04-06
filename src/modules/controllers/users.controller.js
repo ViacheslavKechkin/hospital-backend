@@ -18,13 +18,11 @@ module.exports.getAllUsers = (req, res) => {
 };
 
 module.exports.createUser = async (req, res) => {
-  console.log('OPEN');
   try {
     const { email, password } = req.body;
     const candidate = await User.findOne({ email });
 
     if (candidate) {
-      console.log('candidate');
       return res.status(400).send('User with this email exists !')
     }
 
@@ -36,7 +34,6 @@ module.exports.createUser = async (req, res) => {
     const token = generateAccessToken(user._id, email)
     return res.json({ token, email, user })
   } catch (e) {
-    console.log('error');
     res.status(400).send('Registration error!');
   }
 };

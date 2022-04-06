@@ -5,17 +5,18 @@ const secret = process.env.SECRET;
 module.exports.createRecord = async (req, res) => {
   const { token } = req.headers;
   const { body } = req;
-
+  const {name, doctor, date, comment} = body;
+  
   if (!token) {
     res.status(404).send("Error");
   }
 
   const infoForUser = await jwt.verify(token, secret);
-  if (body) {
+  if (body && infoForUser) {
     body.userId = infoForUser.id;
     const record = new Record(body);
     record.save().then(() => {
-      Record.find({ userId: infoForUser.id }, { userId: 0 }).then(result => {
+      Record.find({ userId: infoForUser.id }, {name, doctor, date, comment}).then(result => {
         res.send({ data: result });
       });
     }).catch((res) => {
@@ -53,20 +54,24 @@ module.exports.updateRecord = async (req, res) => {
   const { token } = req.headers;
   try {
     const infoForUser = await jwt.verify(token, secret);
-
-    if (
-      (body._id && infoForUser && body.hasOwnProperty("name")) ||
-      body.hasOwnProperty("doctor") ||
-      body.hasOwnProperty("date") ||
-      body.hasOwnProperty("comment")
-    ) {
-      Record.updateOne({ _id: body._id }, body).then((result) => {
-        Record.find({ userId: infoForUser.id }).then((result) => {
-          res.send({ data: result });
+    if (infoForUser && body._id) {
+      if (
+        (body.hasOwnProperty("name")) ||
+        body.hasOwnProperty("doctor") ||
+        body.hasOwnProperty("date") ||
+        body.hasOwnProperty("comment")
+      ) {
+        Record.updateOne({ _id: body._id }, body).then((result) => {
+          Record.find({ userId: infoForUser.id }).then((result) => {
+            res.send({ data: result });
+          })
+            .catch((error) => {
+              res.status(404).send("Error");
+            })
         });
-      });
-    } else {
-      res.status(404).send("Error edit Reception");
+      } else {
+        res.status(404).send("Error edit Reception");
+      }
     }
   } catch (error) {
     res.status(404).send("Error edit");
