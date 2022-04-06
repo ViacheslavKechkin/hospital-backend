@@ -5,7 +5,7 @@ const secret = process.env.SECRET;
 module.exports.createRecord = async (req, res) => {
   const { token } = req.headers;
   const { body } = req;
-  
+
   if (!token) {
     res.status(404).send("Error");
   }
@@ -15,9 +15,11 @@ module.exports.createRecord = async (req, res) => {
     body.userId = infoForUser.id;
     const record = new Record(body);
     record.save().then(() => {
-      Record.find({ userId: infoForUser.id }, [ "name", "doctor", "date", "comment" ]).then(result => {
-        res.send({ data: result });
-      });
+      Record.find({ userId: infoForUser.id },
+        ["name", "doctor", "date", "comment"])
+        .then(result => {
+          res.send({ data: result });
+        });
     }).catch((res) => {
       res.status(400).send('Error adding new entry!');
     });
@@ -36,9 +38,11 @@ module.exports.getAllRecords = async (req, res) => {
   try {
     const infoForUser = await jwt.verify(token, secret);
     if (infoForUser) {
-      Record.find({ userId: infoForUser.id }, [ "name", "doctor", "date", "comment" ]).then(result => {
-        res.send({ data: result });
-      })
+      Record.find({ userId: infoForUser.id },
+        ["name", "doctor", "date", "comment"])
+        .then(result => {
+          res.send({ data: result });
+        })
         .catch((error) => {
           res.status(404).send("Error");
         });
@@ -61,9 +65,11 @@ module.exports.updateRecord = async (req, res) => {
         body.hasOwnProperty("comment")
       ) {
         Record.updateOne({ _id: body._id }, body).then((result) => {
-          Record.find({ userId: infoForUser.id }, [ "name", "doctor", "date", "comment" ]).then((result) => {
-            res.send({ data: result });
-          })
+          Record.find({ userId: infoForUser.id },
+            ["name", "doctor", "date", "comment"])
+            .then((result) => {
+              res.send({ data: result });
+            })
             .catch((error) => {
               res.status(404).send("Error");
             })
@@ -74,5 +80,29 @@ module.exports.updateRecord = async (req, res) => {
     }
   } catch (error) {
     res.status(404).send("Error edit");
+  }
+};
+
+module.exports.deleteRecord = async (req, res) => {
+  const id = req.query._id;
+  const { token } = req.headers;
+  try {
+    const infoForUser = await jwt.verify(token, secret);
+    if (infoForUser && id) {
+      ReceptionData.deleteOne({ _id: id }).then((result) => {
+        ReceptionData.find({ userId: infoForUser.id },
+          ["name", "doctor", "date", "comment"])
+          .then((result) => {
+            res.send({ data: result });
+          })
+          .catch((error) => {
+            res.status(404).send("Error");
+          })
+      });
+    } else {
+      res.status(404).send("Error");
+    }
+  } catch (error) {
+    res.status(404).send("Error");
   }
 };
