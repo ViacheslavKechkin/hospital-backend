@@ -1,10 +1,13 @@
 const User = require('../../bd/models/users/index');
 const bcrypt = require('bcryptjs');
 const jwt = require("jsonwebtoken")
-const { secret } = require("../../../config")
+const secret = process.env.SECRET;
 
-const generateAccessToken = (id) => {
-  const payload = { id };
+const generateAccessToken = (id, email) => {
+  const payload = {
+    id,
+    email
+  };
   return jwt.sign(payload, secret, { expiresIn: "24h" });
 }
 
@@ -15,11 +18,13 @@ module.exports.getAllUsers = (req, res) => {
 };
 
 module.exports.createUser = async (req, res) => {
+  console.log('OPEN');
   try {
     const { email, password } = req.body;
     const candidate = await User.findOne({ email });
 
     if (candidate) {
+      console.log('candidate');
       return res.status(400).send('User with this email exists !')
     }
 
@@ -28,9 +33,10 @@ module.exports.createUser = async (req, res) => {
     const user = new User({ email, password: hashPassword });
 
     user.save()
-    const token = generateAccessToken(user._id)
-    res.json({ token })
+    const token = generateAccessToken(user._id, email)
+    return res.json({ token, email, user })
   } catch (e) {
+    console.log('error');
     res.status(400).send('Registration error!');
   }
 };
@@ -50,8 +56,8 @@ module.exports.login = async (req, res) => {
       return res.status(404).send(`Wrong password`);
     }
 
-    const token = generateAccessToken(user._id)
-    return res.json({ token })
+    const token = generateAccessToken(user._id, email)
+    return res.json({ token, user })
   }
   catch (e) {
     res.status(400).send('Login error!');

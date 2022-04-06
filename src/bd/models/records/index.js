@@ -5,7 +5,8 @@ const recordsScheme = new Schema({
   doctor: String,
   date: String,
   comment: String,
-  loginStorage: String
+  email: String,
+  userId: String
 });
 
 module.exports = Record = model("records", recordsScheme);
