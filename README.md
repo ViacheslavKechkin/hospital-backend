@@ -8,6 +8,7 @@ npm i nodemon
 npm i cors
 npm i bcryptjs
 npm i jsonwebtoken
+npm i dotenv
 
 start project:
 npm start 

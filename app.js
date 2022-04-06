@@ -1,16 +1,19 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const mongoose = require("mongoose");
 const app = express();
-const PORT = 9000;
+const PORT = process.env.PORT;
 
-const apiRoutes = require("./src/modules/routes/routes");
+const userRoutes = require("./src/modules/routes/userRouter");
+const recordRoutes = require("./src/modules/routes/recordRouter");
 
 app.use(cors());
 app.use(express.json());
-app.use("/", apiRoutes);
+app.use("/", userRoutes);
+app.use("/", recordRoutes);
 
-const uri = "mongodb+srv://vykechkin:kechkin123@cluster0.w2ver.mongodb.net/Hospital?retryWrites=true&w=majority";
+const uri = process.env.URI;
 mongoose.connect(uri);
 
 const start = () => {
