@@ -5,7 +5,6 @@ const secret = process.env.SECRET;
 module.exports.createRecord = async (req, res) => {
   const { token } = req.headers;
   const { body } = req;
-  const {name, doctor, date, comment} = body;
   
   if (!token) {
     res.status(404).send("Error");
@@ -16,7 +15,7 @@ module.exports.createRecord = async (req, res) => {
     body.userId = infoForUser.id;
     const record = new Record(body);
     record.save().then(() => {
-      Record.find({ userId: infoForUser.id }, {name, doctor, date, comment}).then(result => {
+      Record.find({ userId: infoForUser.id }, [ "name", "doctor", "date", "comment" ]).then(result => {
         res.send({ data: result });
       });
     }).catch((res) => {
