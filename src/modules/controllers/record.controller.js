@@ -36,7 +36,7 @@ module.exports.getAllRecords = async (req, res) => {
   try {
     const infoForUser = await jwt.verify(token, secret);
     if (infoForUser) {
-      Record.find({ userId: infoForUser.id }).then(result => {
+      Record.find({ userId: infoForUser.id }, [ "name", "doctor", "date", "comment" ]).then(result => {
         res.send({ data: result });
       })
         .catch((error) => {
@@ -61,7 +61,7 @@ module.exports.updateRecord = async (req, res) => {
         body.hasOwnProperty("comment")
       ) {
         Record.updateOne({ _id: body._id }, body).then((result) => {
-          Record.find({ userId: infoForUser.id }).then((result) => {
+          Record.find({ userId: infoForUser.id }, [ "name", "doctor", "date", "comment" ]).then((result) => {
             res.send({ data: result });
           })
             .catch((error) => {
