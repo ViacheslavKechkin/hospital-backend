@@ -89,20 +89,20 @@ module.exports.deleteRecord = async (req, res) => {
   try {
     const infoForUser = await jwt.verify(token, secret);
     if (infoForUser && id) {
-      ReceptionData.deleteOne({ _id: id }).then((result) => {
-        ReceptionData.find({ userId: infoForUser.id },
+      Record.deleteOne({ _id: id }).then((result) => {
+        Record.find({ userId: infoForUser.id },
           ["name", "doctor", "date", "comment"])
           .then((result) => {
             res.send({ data: result });
           })
           .catch((error) => {
-            res.status(404).send("Error");
+            res.status(404).send("Error function");
           })
       });
     } else {
-      res.status(404).send("Error");
+      res.status(404).send("Error condition");
     }
   } catch (error) {
-    res.status(404).send("Error");
+    res.status(404).send("Error data");
   }
 };
